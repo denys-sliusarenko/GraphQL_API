@@ -19,55 +19,9 @@ namespace GraphQL_API.Classes
             this.dbContext = dbContext;
         }
 
-        public List<User> Users()
+        public IQueryable<User> Users()
         {
-            using (var context = new DatabaseContext(GetDbOptions()))
-            {
-                return context.Users.ToList();
-            }
+            return dbContext.Users;
         }
-
-        private DbContextOptions<DatabaseContext> GetDbOptions()
-        {
-            string dbName = "GraphQL_API_database";
-
-            var serviceProvider = new ServiceCollection()
-                .AddEntityFrameworkInMemoryDatabase()
-                .BuildServiceProvider();
-
-            var builder = new DbContextOptionsBuilder<DatabaseContext>();
-            builder.UseInMemoryDatabase(dbName)
-                   .UseInternalServiceProvider(serviceProvider);
-            using (var context = new DatabaseContext(builder.Options))
-            {
-                context.Users.AddRange(GetTestUsers());
-                context.SaveChanges();
-            }
-            return builder.Options;
-        }
-
-        private List<User> GetTestUsers()
-        {
-            var users = new List<User>
-            {
-                new User
-                {
-                    FirstName="Tom",
-                    LastName="Walker"
-                },
-                new User
-                {
-                    FirstName="Alice",
-                    LastName="Walker"
-                },
-                new User
-                {
-                    FirstName="Sam",
-                    LastName="Walker"
-                }
-            };
-            return users;
-        }
-
     }
 }
